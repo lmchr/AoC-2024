@@ -7,7 +7,6 @@ import (
 )
 
 func readFile(filename string) []string {
-	log.Println("Reading ", filename)
 	var inputs []string
 
 	file, err := os.Open(filename)
