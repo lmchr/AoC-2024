@@ -17,7 +17,13 @@ func readFile(filename string) []string {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		inputs = append(inputs, line)
+		if len(line) > 0 {
+			inputs = append(inputs, line)
+		}
 	}
 	return inputs
+}
+
+func removeFromList(slice []int, s int) []int {
+	return append(slice[:s], slice[s+1:]...)
 }

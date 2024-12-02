@@ -9,8 +9,8 @@ import (
 
 func Day1() {
 	lines := readFile("data/day1.txt")
-	log.Println("Day 1 Part 1: ", part1(lines))
-	log.Println("Day 1 Part 2: ", part2(lines))
+	log.Println("Day 1 Part 1: ", day1Part1(lines))
+	log.Println("Day 1 Part 2: ", day1Part2(lines))
 }
 
 func getLists(lines []string) ([]int, []int) {
@@ -25,7 +25,7 @@ func getLists(lines []string) ([]int, []int) {
 	return a, b
 }
 
-func part1(lines []string) int {
+func day1Part1(lines []string) int {
 	a, b := getLists(lines)
 	sort.Ints(a)
 	sort.Ints(b)
@@ -40,7 +40,7 @@ func part1(lines []string) int {
 	return res
 }
 
-func part2(lines []string) int {
+func day1Part2(lines []string) int {
 	a, b := getLists(lines)
 	sort.Ints(a)
 	m := make(map[int]int)
