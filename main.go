@@ -16,4 +16,8 @@ func main() {
 	Days.Day2()
 	elapsed = time.Since(start)
 	log.Printf("Execution took %s", elapsed)
+	start = time.Now()
+	Days.Day3()
+	elapsed = time.Since(start)
+	log.Printf("Execution took %s", elapsed)
 }
