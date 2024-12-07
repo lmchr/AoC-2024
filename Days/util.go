@@ -46,11 +46,20 @@ func Reverse(s string) string {
 	return string(runes)
 }
 
-func indexOf(element int, data []int) int {
+func indexOf[T comparable](element T, data []T) int {
 	for k, v := range data {
 		if element == v {
 			return k
 		}
 	}
 	return -1
+}
+
+func restoreField[T any](source [][]T) [][]T {
+	duplicate := make([][]T, len(source))
+	for i := range source {
+		duplicate[i] = make([]T, len(source[i]))
+		copy(duplicate[i], source[i])
+	}
+	return duplicate
 }
