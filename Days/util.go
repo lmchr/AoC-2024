@@ -17,9 +17,7 @@ func readFile(filename string) []string {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		if len(line) > 0 {
-			inputs = append(inputs, line)
-		}
+		inputs = append(inputs, line)
 	}
 	return inputs
 }
@@ -46,4 +44,13 @@ func Reverse(s string) string {
 		runes[i], runes[j] = runes[j], runes[i]
 	}
 	return string(runes)
+}
+
+func indexOf(element int, data []int) int {
+	for k, v := range data {
+		if element == v {
+			return k
+		}
+	}
+	return -1
 }
