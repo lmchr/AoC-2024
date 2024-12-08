@@ -26,6 +26,22 @@ func removeFromList(slice []int, s int) []int {
 	return append(slice[:s], slice[s+1:]...)
 }
 
+// IntPow calculates n to the mth power. Since the result is an int, it is assumed that m is a positive power
+func IntPow(n, m int) int {
+	if m == 0 {
+		return 1
+	}
+
+	if m == 1 {
+		return n
+	}
+
+	result := n
+	for i := 2; i <= m; i++ {
+		result *= n
+	}
+	return result
+}
 func Bool2int(b bool) int {
 	// The compiler currently only optimizes this form.
 	// See issue 6011.

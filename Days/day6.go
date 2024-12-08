@@ -111,7 +111,6 @@ func day6Part2Parallel(lines [][]bool, x int, y int, guardX int, guardY int, gua
 	defer wg.Done()
 	// block cell
 	lines[x][y] = true
-	loopDetected := false
 	pathsTaken := []Position{{X: guardX, Y: guardY}}
 	for {
 		if simulateOneStep(&guardDirection, &guardX, &guardY, &lines) {
@@ -123,15 +122,13 @@ func day6Part2Parallel(lines [][]bool, x int, y int, guardX int, guardY int, gua
 			// check if the last two steps were done somewhere before this. This means that we have a loop
 			for i := 0; i < len(pathsTaken)-3; i++ {
 				if (pathsTaken[i] == pathsTaken[len(pathsTaken)-2]) && (pathsTaken[i+1] == pathsTaken[len(pathsTaken)-1]) {
-					loopDetected = true
+					ch <- true
+					return
 				}
 			}
 		}
-		if loopDetected {
-			break
-		}
 	}
-	ch <- loopDetected
+	ch <- false
 }
 
 func day6Part2(lines [][]bool, guardX int, guardY int, guardDirection int, fieldsVisitedPart1 map[Position]bool) int {
@@ -142,12 +139,12 @@ func day6Part2(lines [][]bool, guardX int, guardY int, guardDirection int, field
 	wg := new(sync.WaitGroup)
 	ch := make(chan bool)
 	for field := range fieldsVisitedPart1 {
-		// The new obstruction can't be placed at the guard's starting position - the guard is there right now and would notice.
-		if field.X == guardXStart && field.Y == guardYStart {
-			continue
-		}
 		// already blocked
 		if lines[field.X][field.Y] {
+			continue
+		}
+		// The new obstruction can't be placed at the guard's starting position - the guard is there right now and would notice.
+		if field.X == guardXStart && field.Y == guardYStart {
 			continue
 		}
 		wg.Add(1)
