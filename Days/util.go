@@ -79,3 +79,14 @@ func restoreField[T any](source [][]T) [][]T {
 	}
 	return arrayCopy
 }
+
+func AbsInt(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
+func replaceAtIndex(in string, r string, i int) string {
+	return in[:i] + r + in[i+1:]
+}
