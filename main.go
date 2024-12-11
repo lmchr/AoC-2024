@@ -5,16 +5,33 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"runtime/pprof"
 	"time"
 )
 
 func main() {
-	var intFlag int
-	flag.IntVar(&intFlag, "day", -1, "Provide the day to execute [1..24]")
+	var day int
+	var cpuProfile string
+	flag.IntVar(&day, "day", -1, "Provide the day to execute [1..24]")
+	flag.StringVar(&cpuProfile, "cpuprofile", "", "write cpu profile to file")
 	flag.Parse()
+
+	if cpuProfile != "" {
+		f, err := os.Create(cpuProfile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = pprof.StartCPUProfile(f)
+		if err != nil {
+			panic(err)
+		}
+		defer pprof.StopCPUProfile()
+	}
+
 	log.Printf("AoC-2024")
 	start := time.Now()
-	switch intFlag {
+	switch day {
 	case 1:
 		Days.Day1()
 	case 2:
@@ -30,7 +47,7 @@ func main() {
 	case 7:
 		Days.Day7()
 	default:
-		panic(fmt.Sprintf("Invalid day or not implemented yet: %d. Execute with e.g. '-day 1'", intFlag))
+		panic(fmt.Sprintf("Invalid day or not implemented yet: %d. Execute with e.g. '-day 1'", day))
 	}
 	elapsed := time.Since(start)
 	log.Printf("Execution took %s", elapsed)
