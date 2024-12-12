@@ -86,7 +86,3 @@ func AbsInt(x int) int {
 	}
 	return x
 }
-
-func replaceAtIndex(in string, r string, i int) string {
-	return in[:i] + r + in[i+1:]
-}
