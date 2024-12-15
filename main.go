@@ -54,6 +54,8 @@ func main() {
 		Days.Day10()
 	case 11:
 		Days.Day11()
+	case 12:
+		Days.Day12()
 	default:
 		panic(fmt.Sprintf("Invalid day or not implemented yet: %d. Execute with e.g. '-day 1'", day))
 	}
