@@ -13,60 +13,74 @@ func Day11() {
 		linesSplitInt, _ := strconv.Atoi(line)
 		linesInt = append(linesInt, linesSplitInt)
 	}
-	log.Println("Day 11 Part 1: ", day11(linesInt, 25))
-	log.Println("Day 11 Part 2: ", day11(linesInt, 75))
+	log.Println("Day 11 Part 1: ", day11(linesInt, true))
+	log.Println("Day 11 Part 2: ", day11(linesInt, false))
 }
 
-func recurse(currNum int, numStones *int, depthRemaining int, splitCache map[int][]int) {
+func recurse(currNum int, depthRemaining int, stonesLastDepth *[]int) {
 	if depthRemaining <= 0 {
+		(*stonesLastDepth) = append(*stonesLastDepth, currNum)
 		return
 	}
-	if val, ok := splitCache[currNum]; ok {
-		if len(val) == 2 {
-			(*numStones) += 1
-			recurse(val[0], numStones, depthRemaining-1, splitCache)
-			recurse(val[1], numStones, depthRemaining-1, splitCache)
-		} else {
-			recurse(val[0], numStones, depthRemaining-1, splitCache)
-		}
+	if currNum == 0 {
+		recurse(1, depthRemaining-1, stonesLastDepth)
 	} else {
-		if currNum == 0 {
-			m := make([]int, 1)
-			m[0] = 1
-			splitCache[currNum] = m
-			recurse(1, numStones, depthRemaining-1, splitCache)
+		x := string(strconv.Itoa(currNum))
+		if len(x)%2 == 0 {
+			firstHalf := x[:len(x)/2]
+			secondHalf := x[len(x)/2:]
+			firstHalfInt, _ := strconv.Atoi(firstHalf)
+			secondHalfInt, _ := strconv.Atoi(secondHalf)
+			recurse(firstHalfInt, depthRemaining-1, stonesLastDepth)
+			recurse(secondHalfInt, depthRemaining-1, stonesLastDepth)
 		} else {
-			x := string(strconv.Itoa(currNum))
-			if len(x)%2 == 0 {
-				firstHalf := x[:len(x)/2]
-				secondHalf := x[len(x)/2:]
-				firstHalfInt, _ := strconv.Atoi(firstHalf)
-				secondHalfInt, _ := strconv.Atoi(secondHalf)
-				(*numStones) += 1
-				m := make([]int, 2)
-				m[0] = firstHalfInt
-				m[1] = secondHalfInt
-				splitCache[currNum] = m
-				recurse(firstHalfInt, numStones, depthRemaining-1, splitCache)
-				recurse(secondHalfInt, numStones, depthRemaining-1, splitCache)
-			} else {
-				m := make([]int, 1)
-				m[0] = currNum * 2024
-				splitCache[currNum] = m
-				recurse(currNum*2024, numStones, depthRemaining-1, splitCache)
-			}
+			recurse(currNum*2024, depthRemaining-1, stonesLastDepth)
 		}
 	}
 }
 
-func day11(lines []int, depth int) int {
+func day11(lines []int, part1 bool) int {
 	res := 0
-	splitCache := make(map[int][]int)
-	for i := len(lines) - 1; i >= 0; i-- {
-		log.Println(i)
-		val := lines[i]
-		res += 1
-		recurse(val, &res, depth, splitCache)
+	var depth int
+	if part1 {
+		depth = 25
+	} else {
+		depth = 75
+	}
+	cacheFor25Layers := make(map[int][]int)
+	for i := 0; i < len(lines); i++ {
+		stonei32 := lines[i]
+		// #1: depth 1-25
+		stones1 := make([]int, 0)
+		recurse(stonei32, depth, &stones1)
+		if part1 {
+			res += len(stones1)
+			continue
+		}
+		cacheFor25Layers[stonei32] = stones1
+		// #2: depth 26-50
+		for _, stone := range stones1 {
+			tmp, ok := cacheFor25Layers[stone]
+			if !ok {
+				// cache missing. calculate now
+				stonesLastDepth := make([]int, 0)
+				recurse(stone, depth, &stonesLastDepth)
+				cacheFor25Layers[stone] = stonesLastDepth
+				tmp = stonesLastDepth
+			}
+			// #3: depth 51-75
+			for _, stonex := range tmp {
+				tmp, ok := cacheFor25Layers[stonex]
+				if !ok {
+					// cache missing. calculate now
+					stonesLastDepth := make([]int, 0)
+					recurse(stonex, depth, &stonesLastDepth)
+					cacheFor25Layers[stonex] = stonesLastDepth
+					tmp = stonesLastDepth
+				}
+				res += len(tmp)
+			}
+		}
 	}
 	return res
 }
